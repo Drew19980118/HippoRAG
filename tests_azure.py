@@ -6,14 +6,27 @@ import logging
 
 from src.hipporag import HippoRAG
 
+
 def main():
     parser = argparse.ArgumentParser(description="Testing HippoRAG")
     parser.add_argument('--azure_endpoint', type=str, default=None, help='Azure Endpoint URL')
     parser.add_argument('--azure_embedding_endpoint', type=str, default=None, help='Azure Embedding Endpoint')
     args = parser.parse_args()
 
-    azure_endpoint = args.azure_endpoint
-    azure_embedding_endpoint = args.azure_embedding_endpoint
+    # ========== 重要：设置 Azure OpenAI 凭证 ==========
+    os.environ["AZURE_OPENAI_API_KEY"] = "50a857aec1164241a3411b5e38e99982"
+    # 也可以设置通用的 OPENAI_API_KEY，有些代码可能使用这个
+    os.environ["OPENAI_API_KEY"] = "50a857aec1164241a3411b5e38e99982"
+
+    # 设置 Azure OpenAI 特定的环境变量
+    os.environ["AZURE_OPENAI_ENDPOINT"] = "https://genai-jp.openai.azure.com/"
+    os.environ["OPENAI_API_TYPE"] = "azure"
+    os.environ["OPENAI_API_VERSION"] = "2024-02-15-preview"
+    # ================================================
+
+    azure_endpoint = args.azure_endpoint or "https://genai-jp.openai.azure.com/openai/deployments/ln-gpt40/chat/completions?api-version=2024-02-15-preview"
+
+    azure_embedding_endpoint = args.azure_embedding_endpoint or "https://genai-jp.openai.azure.com/openai/deployments/text-embedding-3-small/embeddings?api-version=2023-05-15"
 
     # Prepare datasets and evaluation
     docs = [
@@ -30,15 +43,23 @@ def main():
 
     save_dir = 'outputs/azure_test'  # Define save directory for HippoRAG objects (each LLM/Embedding model combination will create a new subdirectory)
     llm_model_name = 'gpt-4o-mini'  # Any OpenAI model name
-    embedding_model_name = 'text-embedding-3-small'  # Embedding model name (NV-Embed, GritLM or Contriever for now)
+    # embedding_model_name = 'text-embedding-3-small'  # Embedding model name (NV-Embed, GritLM or Contriever for now)
+    #
+    # # Startup a HippoRAG instance
+    # hipporag = HippoRAG(save_dir=save_dir,
+    #                     llm_model_name=llm_model_name,
+    #                     embedding_model_name=embedding_model_name,
+    #                     azure_endpoint=azure_endpoint,
+    #                     azure_embedding_endpoint=azure_embedding_endpoint
+    #                     )
 
-    # Startup a HippoRAG instance
+    embedding_model_name = 'facebook/contriever'  # 使用Contriever作为嵌入模型
+
+    # 初始化HippoRAG，只传递Azure的LLM端点，不传递嵌入模型端点（因为使用本地模型）
     hipporag = HippoRAG(save_dir=save_dir,
                         llm_model_name=llm_model_name,
                         embedding_model_name=embedding_model_name,
-                        azure_endpoint=azure_endpoint,
-                        azure_embedding_endpoint=azure_embedding_endpoint
-                        )
+                        azure_endpoint=azure_endpoint)
 
     # Run indexing
     hipporag.index(docs=docs)
