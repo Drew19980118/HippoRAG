@@ -14,9 +14,9 @@ def main():
     args = parser.parse_args()
 
     # ========== 重要：设置 Azure OpenAI 凭证 ==========
-    os.environ["AZURE_OPENAI_API_KEY"] = "50a857aec1164241a3411b5e38e99982"
+    os.environ["AZURE_OPENAI_API_KEY"] = "API Key"
     # 也可以设置通用的 OPENAI_API_KEY，有些代码可能使用这个
-    os.environ["OPENAI_API_KEY"] = "50a857aec1164241a3411b5e38e99982"
+    os.environ["OPENAI_API_KEY"] = "API Key"
 
     # 设置 Azure OpenAI 特定的环境变量
     os.environ["AZURE_OPENAI_ENDPOINT"] = "https://genai-jp.openai.azure.com/"
