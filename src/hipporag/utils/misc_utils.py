@@ -91,7 +91,10 @@ def extract_entity_nodes(chunk_triples: List[List[Triple]]) -> (List[str], List[
             else:
                 logger.warning(f"During graph construction, invalid triple is found: {t}")
         chunk_triple_entities.append(list(triple_entities))
-    graph_nodes = list(np.unique([ent for ents in chunk_triple_entities for ent in ents]))
+    # graph_nodes = list(np.unique([ent for ents in chunk_triple_entities for ent in ents]))
+    all_entities = [ent for ents in chunk_triple_entities for ent in ents]
+    unique_sorted_entities = np.unique(all_entities)
+    graph_nodes = list(unique_sorted_entities)
     return graph_nodes, chunk_triple_entities
 
 def flatten_facts(chunk_triples: List[Triple]) -> List[Triple]:

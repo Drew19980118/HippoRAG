@@ -153,7 +153,7 @@ class HippoRAG:
 
         # self.openie_results_path = os.path.join(self.global_config.save_dir,f'openie_results_ner_{self.global_config.llm_name.replace("/", "_")}.json')
 
-        self.openie_results_path = os.path.join(self.global_config.save_dir,f'openie_results_ner_Qwen_Qwen2.5-32B-Instruct.json')
+        self.openie_results_path = os.path.join(self.global_config.save_dir,f'openie_results_ner_Qwen_Qwen2.5-14B-Instruct.json')
 
         self.rerank_filter = DSPyFilter(self)
 
