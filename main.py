@@ -78,6 +78,7 @@ def main():
     parser.add_argument('--openie_mode', choices=['online', 'offline'], default='online',
                         help="OpenIE mode, offline denotes using VLLM offline batch mode for indexing, while online denotes")
     parser.add_argument('--save_dir', type=str, default='outputs', help='Save directory')
+    parser.add_argument('--skip_graph', type=bool, default=False, help='Skip graph')
     args = parser.parse_args()
 
     dataset_name = args.dataset
@@ -126,7 +127,8 @@ def main():
         embedding_batch_size=8,
         max_new_tokens=None,
         corpus_len=len(corpus),
-        openie_mode=args.openie_mode
+        openie_mode=args.openie_mode,
+        skip_graph=args.skip_graph
     )
 
     logging.basicConfig(level=logging.INFO)

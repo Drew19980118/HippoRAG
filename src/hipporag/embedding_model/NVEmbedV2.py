@@ -27,7 +27,20 @@ class NVEmbedV2EmbeddingModel(BaseEmbeddingModel):
         # Initializing the embedding model
         logger.debug(f"Initializing {self.__class__.__name__}'s embedding model with params: {self.embedding_config.model_init_params}")
 
+        # self.embedding_model = AutoModel.from_pretrained(**self.embedding_config.model_init_params)
         self.embedding_model = AutoModel.from_pretrained(**self.embedding_config.model_init_params)
+
+        # ⭐⭐⭐ 关键：直接指定使用cuda:1 ⭐⭐⭐
+        if torch.cuda.is_available() and torch.cuda.device_count() > 1:
+            # 强制使用物理GPU1（cuda:1）
+            self.embedding_model = self.embedding_model.to("cuda:1")
+            logger.debug("NV-Embed-v2模型已加载到物理GPU1 (cuda:1)")
+        elif torch.cuda.is_available():
+            # 如果只有1个GPU，使用cuda:0
+            self.embedding_model = self.embedding_model.to("cuda:0")
+            logger.debug("NV-Embed-v2模型已加载到GPU0 (cuda:0)")
+        else:
+            logger.debug("NV-Embed-v2模型加载到CPU")
         self.embedding_dim = self.embedding_model.config.hidden_size
 
     def _init_embedding_config(self) -> None:
